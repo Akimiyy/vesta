@@ -55,18 +55,18 @@ namespace
 #if defined(VESTA_SHOT_TRACE_ENABLED) && VESTA_SHOT_TRACE_ENABLED
         if (argc == 3)
         {
-            const std::string_view command{ argv[1] };
+            const std::string_view command{ argv };
             if (command == "--seed-snapshot-report")
             {
-                ::ExitProcess(simulation::seed_diagnostics::report(argv[2]));
+                ::ExitProcess(simulation::seed_diagnostics::report(argv));
             }
             if (command == "--compatibility-report")
             {
-                ::ExitProcess(game::compatibility::report(argv[2]));
+                ::ExitProcess(game::compatibility::report(argv));
             }
             if (command == "--auto-accept-report")
             {
-                ::ExitProcess(features::misc::auto_accept_report(argv[2]));
+                ::ExitProcess(features::misc::auto_accept_report(argv));
             }
         }
 #endif
@@ -151,32 +151,32 @@ int main(int argc, char** argv)
     // Connect dependencies and attach to target memory space
     if (!app::context().process.attach(L"cs2.exe"))
     {
-        app::context().diagnostics.error("Process attachment initialization failure: Could not find or open a handle to cs2.exe.");
+        app::context().diagnostics.warning("Process attachment failure: Could not open a handle to cs2.exe.");
         return EXIT_FAILURE;
     }
     
     if (!app::context().input.connect())
     {
-        app::context().diagnostics.error("Input pipeline connection failure: Gateway hook failed to map hardware devices.");
+        app::context().diagnostics.warning("Input pipeline connection failure: Gateway hook failed to map hardware devices.");
         return EXIT_FAILURE;
     }
 
     // Dynamic pattern scanning configuration steps
     if (!app::context().modules.discover(app::context().process))
     {
-        app::context().diagnostics.error("Module discovery failure: Failed to parse running imagery within client.dll / engine2.dll namespaces.");
+        app::context().diagnostics.warning("Module discovery failure: Failed to parse running imagery within modules.");
         return EXIT_FAILURE;
     }
     
     if (!app::context().addresses.initialize())
     {
-        app::context().diagnostics.error("Address mapping failure: Static dynamic signatures could not cross-reference memory bounds.");
+        app::context().diagnostics.warning("Address mapping failure: Static dynamic signatures could not cross-reference.");
         return EXIT_FAILURE;
     }
     
     if (!game::fields().initialize())
     {
-        app::context().diagnostics.error("Schema layout failure: Game networking fields structure offsets could not be resolved.");
+        app::context().diagnostics.warning("Schema layout failure: Game field offsets could not be resolved.");
         return EXIT_FAILURE;
     }
 
@@ -224,7 +224,7 @@ int main(int argc, char** argv)
     // Launch UI Overlay context main execution block
     if (!app::context().overlay.launch())
     {
-        app::context().diagnostics.error("Overlay startup failed: ImGui runtime windows layout initialization broke during setup loop.");
+        app::context().diagnostics.warning("Overlay startup failed: ImGui initialization broke.");
         exit_code = EXIT_FAILURE;
     }
 
